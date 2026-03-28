@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earth Explorer</title>
+    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ── LOADING SCREEN ────────────────────────── -->
+    <div id="loading-screen">
+        <div id="loading-inner">
+            <div id="loading-globe">🌍</div>
+            <div id="loading-title">EARTH EXPLORER</div>
+            <div id="loading-sub">Initializing globe…</div>
+            <div id="loading-track">
+                <div id="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── LOGO ──────────────────────────────────── -->
+    <div id="site-logo">
+        <img src="logo.png" alt="Logo">
+        <span>EARTH EXPLORER</span>
+    </div>
+
+    <!-- ── SEARCH ────────────────────────────────── -->
+    <div id="search-container">
+        <div id="search-wrapper">
+            <input
+                type="text"
+                id="country-search"
+                placeholder="Search a country…"
+                autocomplete="off"
+                spellcheck="false"
+            >
+            <button id="search-btn" aria-label="Search">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+            </button>
+        </div>
+        <div id="search-suggestions"></div>
+    </div>
+
+    <!-- ── THREE.JS CANVAS ───────────────────────── -->
+    <div id="canvas-container"></div>
+
+    <!-- ── INFO PANEL ────────────────────────────── -->
+    <div id="info-panel">
+        <button id="close-btn" aria-label="Close">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="1" y1="1" x2="13" y2="13"/><line x1="13" y1="1" x2="1" y2="13"/>
+            </svg>
+        </button>
+
+        <img id="country-flag" src="" alt="Flag">
+
+        <h2 id="country-name">—</h2>
+
+        <div class="info-row">
+            <span class="info-label">Capital</span>
+            <span id="country-capital" class="info-value">—</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Population</span>
+            <span id="country-population" class="info-value">—</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Currency</span>
+            <span id="country-currency" class="info-value">—</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Region</span>
+            <span id="country-region" class="info-value">—</span>
+        </div>
+
+    </div>
+
+    <!-- ── AUTHOR TAG ─────────────────────────────── -->
+    <div id="author-tag">© Gheorghe-Mitrea Petru-Alexis</div>
+
+    <!-- ── SCRIPTS ───────────────────────────────── -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
