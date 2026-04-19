@@ -1,12 +1,8 @@
-// ============================================================
-//  EARTH EXPLORER — app.js
-// ============================================================
-
 let countriesData = null;
 let cameraAnchor  = null;
 let selectedCountryMesh = null;
 let cameraAnimState = null;
-let sunLight, sunMesh, sunPivot; // visible sun objects
+let sunLight, sunMesh, sunPivot; 
 
 const raycaster = new THREE.Raycaster();
 const mouse     = new THREE.Vector2();
@@ -14,10 +10,6 @@ const mouse     = new THREE.Vector2();
 let scene, camera, renderer, controls, earth, clouds;
 
 window.onload = init;
-
-// ─────────────────────────────────────────────
-//  INIT
-// ─────────────────────────────────────────────
 function init() {
     scene = new THREE.Scene();
 
@@ -29,26 +21,19 @@ function init() {
     renderer.setPixelRatio(window.devicePixelRatio);
     document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-    // ── LIGHTS ──────────────────────────────────
-    // Soft ambient so the dark side isn't fully black
     scene.add(new THREE.AmbientLight(0x334466, 2.2));
 
-    // The actual sun light — warm, strong directional
     sunLight = new THREE.DirectionalLight(0xfff0cc, 1.4);
     sunLight.position.set(8, 2, 6);
     scene.add(sunLight);
 
-    // ── VISIBLE SUN (pivot → orbit) ─────────────
     sunPivot = new THREE.Object3D();
     scene.add(sunPivot);
 
-    // Core sphere
     const sunGeo = new THREE.SphereGeometry(0.22, 32, 32);
     const sunMat = new THREE.MeshBasicMaterial({ color: 0xffe87a });
     sunMesh = new THREE.Mesh(sunGeo, sunMat);
-    sunMesh.position.set(8, 2, 6); // same starting position as light
-
-    // Glow halo — a slightly larger additive sphere
+    sunMesh.position.set(8, 2, 6); 
     const glowGeo = new THREE.SphereGeometry(0.42, 32, 32);
     const glowMat = new THREE.ShaderMaterial({
         uniforms: { color: { value: new THREE.Color(0xffe060) } },
@@ -71,8 +56,6 @@ function init() {
     });
     const glowMesh = new THREE.Mesh(glowGeo, glowMat);
     sunMesh.add(glowMesh);
-
-    // Corona rays via second larger additive halo
     const coronaGeo = new THREE.SphereGeometry(0.62, 32, 32);
     const coronaMat = new THREE.ShaderMaterial({
         uniforms: { color: { value: new THREE.Color(0xff9900) } },
@@ -96,8 +79,6 @@ function init() {
     sunMesh.add(new THREE.Mesh(coronaGeo, coronaMat));
 
     sunPivot.add(sunMesh);
-
-    // ── EARTH — simple textured Phong ───────────
     const loader = new THREE.TextureLoader();
     const earthGeo = new THREE.SphereGeometry(1, 64, 64);
 
@@ -110,8 +91,6 @@ function init() {
 
     earth = new THREE.Mesh(earthGeo, earthMat);
     scene.add(earth);
-
-    // ── CLOUDS ──────────────────────────────────
     const cloudGeo  = new THREE.SphereGeometry(1.012, 64, 64);
     const cloudMat  = new THREE.MeshPhongMaterial({
         map: loader.load('https://unpkg.com/three-globe/example/img/earth-clouds.png'),
@@ -122,7 +101,6 @@ function init() {
     clouds = new THREE.Mesh(cloudGeo, cloudMat);
     scene.add(clouds);
 
-    // ── ATMOSPHERE ──────────────────────────────
     const atmoGeo = new THREE.SphereGeometry(1.09, 64, 64);
     const atmoMat = new THREE.ShaderMaterial({
         vertexShader: `
@@ -144,11 +122,8 @@ function init() {
         transparent: true
     });
     scene.add(new THREE.Mesh(atmoGeo, atmoMat));
-
-    // ── STAR FIELD ──────────────────────────────
     createStarField();
 
-    // ── ORBIT CONTROLS ──────────────────────────
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping  = true;
     controls.dampingFactor  = 0.05;
@@ -157,7 +132,6 @@ function init() {
     controls.maxDistance    = 7;
     controls.enablePan      = false;
 
-    // Release camera lock when user grabs the globe manually
     controls.addEventListener('start', () => {
         if (cameraAnchor) {
             earth.remove(cameraAnchor);
@@ -173,9 +147,6 @@ function init() {
     fadeOutLoader();
 }
 
-// ─────────────────────────────────────────────
-//  STARS
-// ─────────────────────────────────────────────
 function createStarField() {
     const geo = new THREE.BufferGeometry();
     const verts = [];
@@ -194,42 +165,31 @@ function createStarField() {
     })));
 }
 
-// ─────────────────────────────────────────────
-//  RESIZE
-// ─────────────────────────────────────────────
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// ─────────────────────────────────────────────
-//  ANIMATE LOOP
-// ─────────────────────────────────────────────
 function animate() {
     requestAnimationFrame(animate);
 
     earth.rotation.y  += 0.0008;
     clouds.rotation.y += 0.001;
-
-    // Slowly orbit the sun around Earth
     sunPivot.rotation.y += 0.0004;
-    sunPivot.rotation.x  = 0.22; // slight axial tilt
-
-    // Keep DirectionalLight perfectly in sync with the visible sun
+    sunPivot.rotation.x  = 0.22; 
     const sunWorldPos = new THREE.Vector3();
     sunMesh.getWorldPosition(sunWorldPos);
     sunLight.position.copy(sunWorldPos);
 
     if (cameraAnimState) {
-        // Smooth fly-to animation (quartic ease-out)
+    
         const t    = Math.min((performance.now() - cameraAnimState.startTime) / cameraAnimState.duration, 1);
         const ease = 1 - Math.pow(1 - t, 4);
         camera.position.lerpVectors(cameraAnimState.startPos, cameraAnimState.targetPos, ease);
         camera.lookAt(0, 0, 0);
         if (t >= 1) cameraAnimState = null;
     } else if (cameraAnchor) {
-        // Follow country as Earth rotates
         const wp = new THREE.Vector3();
         cameraAnchor.getWorldPosition(wp);
         camera.position.lerp(wp, 0.03);
@@ -239,14 +199,9 @@ function animate() {
     controls.update();
     renderer.render(scene, camera);
 }
-
-// ─────────────────────────────────────────────
-//  LOADING SCREEN FADE
-// ─────────────────────────────────────────────
 function fadeOutLoader() {
     const el = document.getElementById('loading-screen');
     if (!el) return;
-    // Animate progress bar to 100% then fade out
     const bar = document.getElementById('loading-progress');
     if (bar) bar.style.width = '100%';
     setTimeout(() => {
@@ -255,30 +210,20 @@ function fadeOutLoader() {
     }, 1400);
 }
 
-// ─────────────────────────────────────────────
-//  GEOJSON
-// ─────────────────────────────────────────────
 fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson')
     .then(r => r.json())
     .then(data => {
         countriesData = data;
         console.log('✅ GeoJSON loaded —', data.features.length, 'countries');
     });
-
-// ─────────────────────────────────────────────
-//  CLICK ON GLOBE
-// ─────────────────────────────────────────────
 function onCountryClick(event) {
-    // Ignore clicks on UI elements
     if (event.target !== renderer.domElement) return;
 
     mouse.x =  (event.clientX / window.innerWidth)  * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
     raycaster.setFromCamera(mouse, camera);
     const hits = raycaster.intersectObject(earth);
     if (!hits.length) return;
-
     const local = earth.worldToLocal(hits[0].point.clone());
     const lat   = Math.asin(local.y) * (180 / Math.PI);
     const lon   = -Math.atan2(local.z, local.x) * (180 / Math.PI);
@@ -313,10 +258,6 @@ function isPointInCountry(lon, lat, feature) {
     if (type === 'MultiPolygon') return coordinates.some(p => pip(p[0], [lon, lat]));
     return false;
 }
-
-// ─────────────────────────────────────────────
-//  COUNTRY OUTLINE
-// ─────────────────────────────────────────────
 function drawCountryOutline(feature) {
     if (selectedCountryMesh) {
         earth.remove(selectedCountryMesh);
@@ -350,9 +291,6 @@ function drawCountryOutline(feature) {
     earth.add(selectedCountryMesh);
 }
 
-// ─────────────────────────────────────────────
-//  INFO PANEL
-// ─────────────────────────────────────────────
 async function displayCountryInfo(name) {
     const panel = document.getElementById('info-panel');
     panel.classList.add('loading');
@@ -381,10 +319,6 @@ async function displayCountryInfo(name) {
         panel.classList.remove('loading');
     }
 }
-
-// ─────────────────────────────────────────────
-//  CLOSE PANEL  — single handler, complete cleanup
-// ─────────────────────────────────────────────
 document.getElementById('close-btn').onclick = function () {
     document.getElementById('info-panel').classList.remove('visible');
 
@@ -392,8 +326,6 @@ document.getElementById('close-btn').onclick = function () {
         earth.remove(selectedCountryMesh);
         selectedCountryMesh = null;
     }
-
-    // ← THE KEY FIX: always null out anchor + stop anim
     if (cameraAnchor) {
         earth.remove(cameraAnchor);
         cameraAnchor = null;
@@ -403,10 +335,6 @@ document.getElementById('close-btn').onclick = function () {
     controls.target.set(0, 0, 0);
     controls.update();
 };
-
-// ─────────────────────────────────────────────
-//  SEARCH  (with live autocomplete)
-// ─────────────────────────────────────────────
 document.getElementById('search-btn').addEventListener('click', searchCountry);
 
 document.getElementById('country-search').addEventListener('keydown', e => {
@@ -453,8 +381,6 @@ function searchCountry() {
 function runSearch(input) {
     if (!countriesData) return;
     const lower = input.toLowerCase();
-
-    // Exact match first, then partial
     const country =
         countriesData.features.find(f => f.properties.NAME.toLowerCase() === lower) ||
         countriesData.features.find(f => f.properties.NAME.toLowerCase().includes(lower));
@@ -466,15 +392,10 @@ function runSearch(input) {
     }
 }
 
-// ─────────────────────────────────────────────
-//  CAMERA FOCUS  (centroid + smooth fly-to)
-// ─────────────────────────────────────────────
 function focusOnCountry(feature) {
     const ring = feature.geometry.type === 'Polygon'
         ? feature.geometry.coordinates[0]
         : feature.geometry.coordinates[0][0];
-
-    // Use centroid of the ring for a better focal point
     let sumLon = 0, sumLat = 0;
     ring.forEach(c => { sumLon += c[0]; sumLat += c[1]; });
     const lon = sumLon / ring.length;
@@ -487,14 +408,10 @@ function focusOnCountry(feature) {
     const tx = -dist * Math.sin(phi) * Math.cos(theta);
     const ty =  dist * Math.cos(phi);
     const tz =  dist * Math.sin(phi) * Math.sin(theta);
-
-    // Anchor (follows Earth's rotation)
     if (cameraAnchor) earth.remove(cameraAnchor);
     cameraAnchor = new THREE.Object3D();
     cameraAnchor.position.set(tx, ty, tz);
     earth.add(cameraAnchor);
-
-    // Smooth animated fly-to
     cameraAnimState = {
         startPos:  camera.position.clone(),
         targetPos: new THREE.Vector3(tx, ty, tz),

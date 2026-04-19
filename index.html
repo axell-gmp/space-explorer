@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Earth Explorer</title>
+    <title>Space Explorer</title>
     <link rel="icon" href="logo.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,26 +11,20 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <!-- ── LOADING SCREEN ────────────────────────── -->
     <div id="loading-screen">
         <div id="loading-inner">
             <div id="loading-globe">🌍</div>
-            <div id="loading-title">EARTH EXPLORER</div>
-            <div id="loading-sub">Initializing globe…</div>
+            <div id="loading-title">Space Explorer</div>
+            <div id="loading-sub">încărcare glob...</div>
             <div id="loading-track">
                 <div id="loading-progress"></div>
             </div>
         </div>
     </div>
-
-    <!-- ── LOGO ──────────────────────────────────── -->
     <div id="site-logo">
         <img src="logo.png" alt="Logo">
-        <span>EARTH EXPLORER</span>
+        <span>Space Explorer</span>
     </div>
-
-    <!-- ── SEARCH ────────────────────────────────── -->
     <div id="search-container">
         <div id="search-wrapper">
             <input
@@ -48,11 +42,7 @@
         </div>
         <div id="search-suggestions"></div>
     </div>
-
-    <!-- ── THREE.JS CANVAS ───────────────────────── -->
     <div id="canvas-container"></div>
-
-    <!-- ── INFO PANEL ────────────────────────────── -->
     <div id="info-panel">
         <button id="close-btn" aria-label="Close">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -82,11 +72,7 @@
         </div>
 
     </div>
-
-    <!-- ── AUTHOR TAG ─────────────────────────────── -->
     <div id="author-tag">© Gheorghe-Mitrea Petru-Alexis</div>
-
-    <!-- ── SCRIPTS ───────────────────────────────── -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="app.js"></script>
