@@ -354,7 +354,7 @@ html, body {
     border-radius: 20px;
     backdrop-filter: blur(8px);
     cursor: default;
-    pointer-events: none;
+    pointer-events: auto;
     transition: color 0.3s, border-color 0.3s, text-shadow 0.3s;
 }
 
